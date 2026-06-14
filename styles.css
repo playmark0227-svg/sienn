@@ -218,6 +218,20 @@ img { max-width: 100%; display: block; }
   background: linear-gradient(to bottom, transparent, var(--bg));
 }
 
+/* 「すぐ診断」用：トップにフォームを置くコンパクトなヒーロー */
+.hero-diag { padding: 50px 0 96px; }
+.hero-diag .hero-title {
+  font-size: clamp(1.45rem, 5.4vw, 2.3rem);
+  margin-bottom: 16px;
+}
+.hero-diag .hero-lead { margin-bottom: 26px; }
+.hero-diag .diag-form {
+  margin-top: 6px;
+  text-align: left;
+  border: 1px solid rgba(216, 180, 106, .28);
+}
+.hero-diag .hero-note { margin-top: 22px; }
+
 /* ===== セクション共通 ===== */
 .section { padding: 78px 0; position: relative; }
 .section-eyebrow {
