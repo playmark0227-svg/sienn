@@ -71,6 +71,33 @@ const CONFIG = {
   （写真を使う場合は `<div class="profile-avatar">…</div>` を `<img>` に置き換え）
 - キャッチコピーや説明文も `index.html` 内で自由に調整できます。
 
+## LINE連携（リッチメニュー → 診断 → 結果をトークに送って戻る）
+
+公式LINEのリッチメニューからこのツールを開き、診断後に
+**結果をトークに送って自動でLINEに戻る**仕組みを、LIFF で用意済みです
+（サーバー不要）。**いまは無効**（`CONFIG.LIFF_ID` が空）で、通常のWebサイトとして動作します。
+
+### 公式LINEができたら、有効化の手順
+
+1. **LINE公式アカウント**（Messaging API）を用意
+2. **LINEログイン用チャネル**を作成し、**LIFFアプリ**を追加
+   - エンドポイントURL：`https://playmark0227-svg.github.io/sienn/`
+   - サイズ：Full、**scope に `chat_message.write` を含める**
+   - 発行された **LIFF ID** を控える
+3. `script.js` の `CONFIG.LIFF_ID` にその **LIFF ID を入れる**だけ
+   ```js
+   LIFF_ID: "1234567890-abcdEFGH", // ← ここに入れる
+   ```
+4. リッチメニューのリンクに **LIFF URL**（`https://liff.line.me/{LIFF_ID}`）を設定
+
+これだけで、LINE内で開いたときに結果ボタンが
+**「診断結果をLINEに送って戻る」**に変わり、押すと結果テキストが
+ユーザーと公式アカウントのトークに送信され、LINEに戻ります。
+逸見弘子さんはトーク履歴で各人の結果を確認できます。
+
+> 送信される文面は `script.js` の `LIFF.buildResultMessage()` で調整できます。
+> LINE外（通常のブラウザ）で開いた場合は、これまで通り友だち追加ボタンが表示されます。
+
 ## 診断ロジックについて（重要）
 
 令翠学そのものの計算式は非公開ですが、**令翠学と同じ構造**

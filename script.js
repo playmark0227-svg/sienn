@@ -15,6 +15,12 @@
     //    例: "https://lin.ee/xxxxxxx"
     LINE_URL: "https://lin.ee/REPLACE_ME",
 
+    // ▼ LIFF ID（LINEのリッチメニューから開く＆結果をトークに送って戻る用）。
+    //    公式LINE＋LIFFアプリができたら、ここに LIFF ID を入れるだけで有効化されます。
+    //    例: "1234567890-abcdEFGH"
+    //    空のままなら通常のWebサイトとして動作します（LIFF機能はオフ）。
+    LIFF_ID: "",
+
     // 診断対象にする生まれ年の範囲
     YEAR_MIN: 1930,
     YEAR_MAX: new Date().getFullYear(),
@@ -169,6 +175,83 @@
   }
 
   /* ===========================================================
+     ③.5 LIFF 連携（LINEのリッチメニュー → 診断 → 結果をトークに送って戻る）
+        --------------------------------------------------------
+        CONFIG.LIFF_ID が空のあいだは何もしません（通常のWeb動作）。
+        公式LINE＋LIFFアプリができたら CONFIG.LIFF_ID を設定するだけで、
+        ・LINE内で開かれているか判定し
+        ・診断結果ボタンを「結果をLINEに送って戻る」に切り替え
+        ・liff.sendMessages() で結果をトークへ送信 → liff.closeWindow()
+        という挙動が有効になります（サーバー不要）。
+     =========================================================== */
+  const LIFF = {
+    ready: false, // LINEアプリ内でsendMessagesが使える状態か
+
+    // LIFF SDK を動的に読み込む
+    loadSdk() {
+      return new Promise((resolve, reject) => {
+        if (window.liff) return resolve();
+        const s = document.createElement("script");
+        s.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error("LIFF SDK load failed"));
+        document.head.appendChild(s);
+      });
+    },
+
+    async init() {
+      if (!CONFIG.LIFF_ID) return; // 未設定なら何もしない
+      try {
+        await this.loadSdk();
+        await window.liff.init({ liffId: CONFIG.LIFF_ID });
+        // LINEアプリ内（トーク）から開かれている時だけ送信が可能
+        this.ready = window.liff.isInClient();
+      } catch (e) {
+        // 失敗しても通常のWebサイトとして動き続ける
+        this.ready = false;
+        // eslint-disable-next-line no-console
+        console.warn("LIFF init skipped:", e && e.message);
+      }
+    },
+
+    isActive() {
+      return this.ready && window.liff && window.liff.isInClient();
+    },
+
+    // 診断結果を1通のテキストにまとめる（ユーザーがトークに送る文面）
+    buildResultMessage(result, nickname) {
+      const cur = result.current.period;
+      const hi = result.highlight;
+      const when =
+        hi.yearsAhead === 0 ? `${hi.calendarYear}年（まさに今）`
+        : hi.yearsAhead === 1 ? `${hi.calendarYear}年（来年）`
+        : `${hi.calendarYear}年（約${hi.yearsAhead}年後）`;
+      const who = nickname ? `${nickname}です。\n` : "";
+      return (
+        `令翠学の運命周期診断をしました！\n${who}` +
+        `■今いる時期：${cur.season}の「${cur.name}（${cur.yomi}）」\n` +
+        `■一番気になるタイミング：${when} / ${hi.period.season}の「${hi.period.name}」\n` +
+        `詳しい鑑定をお願いしたいです🙏`
+      );
+    },
+
+    // 結果をトークへ送り、LINEに戻る
+    async sendResultAndClose(result, nickname) {
+      try {
+        await window.liff.sendMessages([
+          { type: "text", text: this.buildResultMessage(result, nickname) },
+        ]);
+        window.liff.closeWindow();
+      } catch (e) {
+        // 送信失敗時はユーザーに知らせる（友だち追加URLへのフォールバックは呼び出し側）
+        // eslint-disable-next-line no-console
+        console.warn("liff.sendMessages failed:", e && e.message);
+        alert("結果の送信に失敗しました。お手数ですが、もう一度お試しください。");
+      }
+    },
+  };
+
+  /* ===========================================================
      ④ DOM 構築
      =========================================================== */
   const $ = (sel, ctx) => (ctx || document).querySelector(sel);
@@ -298,6 +381,23 @@
     `;
 
     $("#retryBtn").addEventListener("click", resetToForm);
+
+    // LINE内（LIFF）で開かれている場合は、ボタンを
+    // 「結果をLINEに送って戻る」に切り替える
+    if (LIFF.isActive()) {
+      const lineBtn = $(".result-line-btn", box);
+      if (lineBtn) {
+        lineBtn.removeAttribute("href");
+        lineBtn.removeAttribute("target");
+        const label = lineBtn.querySelector("span:last-child");
+        if (label) label.textContent = "診断結果をLINEに送って戻る";
+        lineBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          LIFF.sendResultAndClose(result, nickname);
+        });
+      }
+    }
+
     box.hidden = false;
     box.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -360,6 +460,9 @@
     buildDateSelects();
     applyLineLinks();
     $("#diagForm").addEventListener("submit", handleSubmit);
+
+    // LIFF（LINE連携）の初期化。CONFIG.LIFF_ID が空なら何もしない。
+    LIFF.init();
 
     const yearNow = $("#year-now");
     if (yearNow) yearNow.textContent = new Date().getFullYear();
