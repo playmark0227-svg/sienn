@@ -83,65 +83,86 @@
   ];
 
   /* ===========================================================
-     ③ 算出ロジック（※近似版。後で公式ロジックに差し替え可）
+     ③ 算出ロジック（12年周期の運命学に基づく本格版）
         --------------------------------------------------------
-        令翠学の正式な算出法は非公開のため、ここでは
-        「運命は12年で一巡する」という考え方に基づいた
-        再現性のある近似で現在地を求めています。
+        令翠学そのものの計算式は非公開だが、令翠学と同じ構造
+        （6つの星×陽陰＝12／12年で一巡／冬の3時期＝大殺界）を
+        もつ「六星占術」は算出法が公開されている。本ツールは
+        その公開アルゴリズムで運命周期を厳密に算出し、令翠学の
+        時期名（開拓期〜精算期）へ1対1で対応づけている。
 
-        ▼ 公式の対応表が手に入ったら、この関数の中身
-          （periodIndexForAge）だけ差し替えればOKです。
+        ▼ 検証した基準（再現性あり）
+          ・日干支の基準: 2000-01-01 = 戊午（六十干支の55番）
+          ・星数 ＝ 生まれた日の六十干支番号(1-60)
+                  1-10土星 / 11-20金星 / 21-30火星 /
+                  31-40天王星 / 41-50木星 / 51-60水星
+          ・陽陰 ＝ 生年の十二支（子寅辰午申戌＝陽）
+          ・各星の「停止」十二支（＝霊合星人の生年）で周期を固定
+          ・検算: 2026年(午)の大殺界＝火星人±・天王星人− に一致
      =========================================================== */
 
-  // 生年月日から、その人固有の「周期のズレ（0..11）」を求める
-  function personalOffset(y, m, d) {
-    // 生年月日を一意な通し日数に変換し、12で割った余りを使う
-    const days = Math.floor(Date.UTC(y, m - 1, d) / 86400000);
-    return ((days % 12) + 12) % 12;
+  // ユリウス通日（整数）
+  function julianDay(y, m, d) {
+    const a = Math.floor((14 - m) / 12);
+    const yy = y + 4800 - a;
+    const mm = m + 12 * a - 3;
+    return d + Math.floor((153 * mm + 2) / 5) + 365 * yy
+      + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
   }
 
-  // 満年齢（誕生日が来ているかを考慮）
-  function ageAt(y, m, d, ref) {
-    let age = ref.getFullYear() - y;
-    const had =
-      ref.getMonth() + 1 > m ||
-      (ref.getMonth() + 1 === m && ref.getDate() >= d);
-    if (!had) age -= 1;
-    return age;
+  // その日の六十干支番号(1-60)。基準: 2000-01-01 = 戊午(55番)
+  function kanshi60(y, m, d) {
+    const r = ((julianDay(y, m, d) + 50) % 60 + 60) % 60;
+    return r === 0 ? 60 : r;
   }
 
-  // 「年齢 n 歳のときの周期 index」を返す
-  function periodIndexForAge(age, offset) {
-    return (((age + offset) % 12) + 12) % 12;
+  // 西暦年の十二支番号（子=1, 丑=2, … 亥=12）。2020年＝子
+  function etoIndex(year) {
+    return ((year - 2020) % 12 + 12) % 12 + 1;
+  }
+
+  // 星数(1-60) → 星の種類  1:土星 2:金星 3:火星 4:天王星 5:木星 6:水星
+  const STAR_NAMES = ["", "土星", "金星", "火星", "天王星", "木星", "水星"];
+
+  // 生年月日 → 星の種類・陽陰、および「停止(=令期)の十二支番号(1-12)」
+  function starProfile(y, m, d) {
+    const seishu = kanshi60(y, m, d);       // 星数
+    const bucket = Math.ceil(seishu / 10);  // 1..6（土→水）
+    const starOrder = 6 - bucket;           // 水星=0 … 土星=5
+    const plus = etoIndex(y) % 2 === 1;     // 生年の十二支が陽か
+    // 霊合星人の対応：水星+=子(1) 水星-=丑(2) … 土星+=戌(11) 土星-=亥(12)
+    const stopEto = starOrder * 2 + (plus ? 1 : 2);
+    return { name: STAR_NAMES[bucket], plus, stopEto };
+  }
+
+  // ある暦年の周期 index(0-11、PERIODS と対応：0=開拓期 … 11=精算期)
+  function periodIndexForYear(year, stopEto) {
+    // 「停止(=令期, index10)」がその人の停止十二支の年に来るよう固定
+    return ((etoIndex(year) - stopEto + 10) % 12 + 12) % 12;
   }
 
   // メインの診断計算
   function diagnose(y, m, d) {
     const now = new Date();
     const nowYear = now.getFullYear();
-    const age = ageAt(y, m, d, now);
-    const offset = personalOffset(y, m, d);
+    const star = starProfile(y, m, d);
 
-    // 今いる時期
-    const currentIndex = periodIndexForAge(age, offset);
+    // 今いる時期（暦年ベース。同じ星・陽陰の人は同じ運気の流れ）
+    const currentIndex = periodIndexForYear(nowYear, star.stopEto);
 
-    // これから（今年含む）12年分を見て、「一番気になるタイミング」を探す。
-    // highlight な時期のうち、もっとも近い年を採用する。
+    // 今年から12年を見て、最も近い「気になる時期」を採用
     let pick = null;
     for (let n = 0; n < 12; n++) {
-      const idx = periodIndexForAge(age + n, offset);
+      const idx = periodIndexForYear(nowYear + n, star.stopEto);
       if (PERIODS[idx].highlight) {
         pick = { yearsAhead: n, calendarYear: nowYear + n, index: idx };
         break;
       }
     }
-    // 念のためのフォールバック（highlightが見つからない設計上はあり得ない）
-    if (!pick) {
-      pick = { yearsAhead: 0, calendarYear: nowYear, index: currentIndex };
-    }
+    if (!pick) pick = { yearsAhead: 0, calendarYear: nowYear, index: currentIndex };
 
     return {
-      age,
+      star,
       current: { index: currentIndex, period: PERIODS[currentIndex] },
       highlight: { ...pick, period: PERIODS[pick.index] },
     };
