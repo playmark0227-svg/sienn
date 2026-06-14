@@ -455,10 +455,30 @@
     if (cta) cta.href = CONFIG.LINE_URL;
   }
 
+  // スクロールで要素をふわっと出現させる（任意の演出・未対応でも表示される）
+  function setupReveal() {
+    const els = document.querySelectorAll("[data-reveal]");
+    if (!els.length) return;
+    const reduce = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce || !("IntersectionObserver" in window)) return; // そのまま表示
+    els.forEach((el) => el.classList.add("reveal"));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-visible");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    els.forEach((el) => io.observe(el));
+  }
+
   function init() {
     buildSeasonsGrid();
     buildDateSelects();
     applyLineLinks();
+    setupReveal();
     $("#diagForm").addEventListener("submit", handleSubmit);
 
     // LIFF（LINE連携）の初期化。CONFIG.LIFF_ID が空なら何もしない。
