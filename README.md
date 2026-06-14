@@ -13,20 +13,41 @@
 | `styles.css` | デザイン（紫基調・上品） |
 | `script.js` | 診断ロジック・結果表示 |
 
-## 公開方法（どれでもOK）
+## 公開URL（GitHub Pages）
 
-- **ローカル確認**: `index.html` をブラウザで開くだけ。
-  （Google Fonts 読み込みのためネット接続を推奨）
-- **そのまま設置**: レンタルサーバーに3ファイルをアップロード。
-- **無料ホスティング**: Netlify / Cloudflare Pages / GitHub Pages にこのフォルダをそのまま。
+公開後のURL：
 
-ローカルで簡易サーバーを使う場合：
+```
+https://playmark0227-svg.github.io/sienn/
+```
+
+### 初回だけ必要な有効化（約30秒・管理画面での手動操作）
+
+GitHub Pagesの「初回有効化」だけは、リポジトリ管理者による手動操作が必要です
+（APIトークンでは作成できないため）。一度設定すれば、以降は**push するだけで自動更新**されます。
+
+1. GitHubでリポジトリを開く → **Settings**（設定）
+2. 左メニューの **Pages**
+3. **Build and deployment** → **Source** で **「Deploy from a branch」** を選択
+4. **Branch** で `claude/friendly-heisenberg-qfahi3` を選び、フォルダは **`/ (root)`**
+5. **Save** を押す
+
+数十秒〜数分で `https://playmark0227-svg.github.io/sienn/` に公開されます。
+
+> 以降、このブランチに push するたびにGitHub Pagesが自動で再ビルド・更新します。
+
+### ローカルで確認する場合
 
 ```bash
 # このフォルダで
 python3 -m http.server 8000
 # → http://localhost:8000 を開く
 ```
+
+### 他のホスティングを使う場合
+
+Netlify / Cloudflare Pages / レンタルサーバー等に、このフォルダの中身を
+そのままアップロードしてもそのまま動きます（ビルド不要）。
 
 ## 運用前に必ず差し替える項目
 
