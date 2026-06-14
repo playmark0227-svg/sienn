@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>令翠学 無料運命周期診断 ｜ 逸見弘子</title>
+  <meta name="description" content="令翠学に基づき、生年月日からあなたの『運命周期』を無料診断。人生で一番気になるタイミングがわかります。詳しい鑑定は運命分析学・逸見弘子へ。" />
+
+  <!-- OGP -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="令翠学 無料運命周期診断 ｜ 逸見弘子" />
+  <meta property="og:description" content="生年月日を入れるだけ。あなたの人生で『一番気になるタイミング』を令翠学で無料診断します。" />
+  <meta property="og:locale" content="ja_JP" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Inline SVG favicon (紫の星) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%233a2a5e'/%3E%3Cpath d='M16 6l2.6 6.4L25 14l-5 4 1.6 6.6L16 21l-5.6 3.6L12 18l-5-4 6.4-1.6z' fill='%23d8b46a'/%3E%3C/svg%3E" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- 背景の星 -->
+  <div class="stars" aria-hidden="true"></div>
+
+  <!-- ===== ヘッダー ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <span class="brand">令翠学 <small>運命周期診断</small></span>
+      <a class="header-cta" href="#diagnosis">無料で診断する</a>
+    </div>
+  </header>
+
+  <!-- ===== ヒーロー ===== -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="hero-eyebrow">生年月日でわかる、日本の運命分析学</p>
+      <h1 class="hero-title">
+        あなたの人生で<br />
+        <span class="accent">一番気になるタイミング</span><br />
+        を令翠学で読み解く
+      </h1>
+      <p class="hero-lead">
+        令翠学では、人生は四季のように<strong>12年でひとめぐり</strong>します。<br />
+        今あなたがどの時期にいるのか、そして<strong>いつ大きな転機が訪れるのか</strong>。<br />
+        生年月日を入れるだけで、無料で診断します。
+      </p>
+      <a class="btn btn-primary btn-lg" href="#diagnosis">
+        <span>無料で運命周期を診断する</span>
+        <small>所要 約30秒・登録不要</small>
+      </a>
+      <p class="hero-note">監修：運命分析学講士 <strong>逸見弘子</strong></p>
+    </div>
+    <div class="hero-fade" aria-hidden="true"></div>
+  </section>
+
+  <!-- ===== 令翠学とは ===== -->
+  <section class="section section-about" id="about">
+    <div class="container narrow">
+      <p class="section-eyebrow">REISUIGAKU</p>
+      <h2 class="section-title">令翠学（れいすいがく）とは</h2>
+      <p class="section-text">
+        令翠学は、生年月日から導き出した星をもとに、人生をより良い方向へ導く<strong>日本の運命分析学</strong>です。
+        人には「天命・宿命・運命」の三つの理（ことわり）があり、このうち自分の意志で変えられるのは<strong>「運命」</strong>だけ。
+        令翠学は、その運命が<strong>四季のように巡るリズム</strong>を読み解き、「今、何をすべきか」を教えてくれます。
+      </p>
+      <div class="three-laws">
+        <div class="law"><span class="law-kanji">天命</span><span class="law-desc">生まれ持った使命</span></div>
+        <div class="law"><span class="law-kanji">宿命</span><span class="law-desc">変えられない宿り</span></div>
+        <div class="law law-accent"><span class="law-kanji">運命</span><span class="law-desc">自分で変えられる流れ</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 運命周期（12時期）の説明 ===== -->
+  <section class="section section-wheel" id="cycle">
+    <div class="container narrow">
+      <p class="section-eyebrow">12 PERIODS</p>
+      <h2 class="section-title">運命は「春夏秋冬」で巡る</h2>
+      <p class="section-text center">
+        令翠学では、運気は3年ごとに季節を変え、<strong>4つの季節・12の時期</strong>を経て一巡します。<br />
+        芽吹きの春、花ひらく夏、実りの秋、そして次へ備える冬。<br class="pc-only" />
+        あなたが今どの季節にいるかで、進むべき道は大きく変わります。
+      </p>
+      <div class="seasons-grid" id="seasonsGrid">
+        <!-- JSで生成 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 診断フォーム ===== -->
+  <section class="section section-diagnosis" id="diagnosis">
+    <div class="container narrow">
+      <p class="section-eyebrow">FREE DIAGNOSIS</p>
+      <h2 class="section-title">無料・運命周期診断</h2>
+      <p class="section-text center">
+        あなたの生年月日を入力してください。<br />
+        今いる時期と、これから訪れる<strong>一番気になるタイミング</strong>を読み解きます。
+      </p>
+
+      <form class="diag-form" id="diagForm" novalidate>
+        <div class="field field-name">
+          <label for="nickname">お名前・ニックネーム<span class="optional">（任意）</span></label>
+          <input type="text" id="nickname" name="nickname" maxlength="20" placeholder="例）ひろこ" autocomplete="off" />
+        </div>
+
+        <div class="field">
+          <label>生年月日<span class="required">必須</span></label>
+          <div class="dob-row">
+            <div class="select-wrap">
+              <select id="year" name="year" required aria-label="生まれた年"></select>
+              <span class="unit">年</span>
+            </div>
+            <div class="select-wrap">
+              <select id="month" name="month" required aria-label="生まれた月"></select>
+              <span class="unit">月</span>
+            </div>
+            <div class="select-wrap">
+              <select id="day" name="day" required aria-label="生まれた日"></select>
+              <span class="unit">日</span>
+            </div>
+          </div>
+        </div>
+
+        <p class="form-error" id="formError" role="alert" hidden>生年月日を選択してください。</p>
+
+        <button type="submit" class="btn btn-primary btn-lg btn-block">
+          <span>運命周期を診断する</span>
+          <small>無料・登録不要</small>
+        </button>
+        <p class="form-disclaimer">
+          ※ 入力情報はこの端末内でのみ計算され、どこにも送信・保存されません。
+        </p>
+      </form>
+
+      <!-- 鑑定中アニメーション -->
+      <div class="diag-loading" id="diagLoading" hidden>
+        <div class="loading-orbit" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+        <p>運命周期を読み解いています…</p>
+      </div>
+
+      <!-- 診断結果 -->
+      <div class="diag-result" id="diagResult" hidden>
+        <!-- JSで生成 -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 逸見弘子 プロフィール ===== -->
+  <section class="section section-profile" id="profile">
+    <div class="container narrow">
+      <p class="section-eyebrow">PROFILE</p>
+      <h2 class="section-title">監修・鑑定 ｜ 逸見弘子</h2>
+      <div class="profile-card">
+        <div class="profile-avatar" aria-hidden="true">
+          <span>逸見<br />弘子</span>
+        </div>
+        <div class="profile-body">
+          <p class="profile-role">運命分析学講士／令翠学鑑定士</p>
+          <p class="profile-text">
+            令翠学をもとに、これまで多くの方の人生の岐路に寄り添ってきました。
+            仕事・恋愛・家族・健康——「いつ動けばいいのか」「今は何を大切にすべきか」。
+            生年月日から導く<strong>あなただけの運命周期</strong>を、ひとつひとつ丁寧に読み解きます。
+          </p>
+          <ul class="profile-points">
+            <li>あなたの<strong>宿星</strong>と本来の性質</li>
+            <li>これから12年の<strong>運命周期の全体像</strong></li>
+            <li>今年・来年の<strong>具体的な開運の過ごし方</strong></li>
+            <li>相手との<strong>相性</strong>・人間関係の流れ</li>
+          </ul>
+          <p class="profile-note">
+            ※ プロフィール文・実績・写真はあとから差し替えできます（README参照）。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 最終CTA ===== -->
+  <section class="section section-cta" id="contact">
+    <div class="container narrow cta-box">
+      <h2 class="cta-title">あなたの運命の全体像は<br />鑑定で、もっと深く。</h2>
+      <p class="cta-text">
+        無料診断でわかるのは、運命周期のほんの入り口。<br />
+        あなたの宿星、これからの12年、そして<strong>今やるべきこと</strong>は、
+        逸見弘子の鑑定で詳しくお伝えします。
+      </p>
+      <a class="btn btn-line btn-lg" id="ctaLineBtn" href="#" target="_blank" rel="noopener">
+        <span class="line-icon" aria-hidden="true">LINE</span>
+        <span>LINEで逸見弘子に相談する</span>
+      </a>
+      <p class="cta-sub">友だち追加して、メッセージを送るだけ。</p>
+    </div>
+  </section>
+
+  <!-- ===== フッター ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <p class="footer-brand">令翠学 運命周期診断</p>
+      <p class="footer-disclaimer">
+        本診断は令翠学の考え方をもとにした<strong>簡易診断</strong>であり、結果は娯楽の範囲でお楽しみください。
+        正式な鑑定とは算出方法・精度が異なります。重要な判断は専門の鑑定をご利用ください。
+      </p>
+      <p class="footer-copy">© <span id="year-now"></span> 逸見弘子 ｜ 令翠学運命周期診断</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
